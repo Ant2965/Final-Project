@@ -2,9 +2,20 @@ pipeline {
     agent any
 
     stages {
+         stage('Authenticating') {
+            steps {
+                sh 'echo "Authentication"'
+            }
+        }
         stage('Build') {
             steps {
-                sh 'echo "hekkko world  chauhan sahab"'
+                sh 'echo "Building"'
+            }
+        }
+
+         stage('push to ECR') {
+            steps {
+                sh 'echo "Ecr"'
             }
         }
     }
