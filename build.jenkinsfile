@@ -1,36 +1,44 @@
-pipeline {
-    agent any
+        pipeline {
+            agent any
 
-    stages {
-         stage('Authenticating') {
-            steps {
-                sh 'echo "Authentication"'
-            }
+            stages {
+                stage('Authenticating') {
+                    steps {
+                        sh 'echo "Authentication"'
+                    }
+                }
+                stage('Build') {
+                    steps {
+                        sh 'echo "Building"'
+                    }
+                }
+
+                stage('push to ECR') {
+                    steps {
+                        sh 'echo "Ecr"'
+                    }
+                }
+
+                stage('Build Yolo5 app') {
+                steps {
+                    sh '''
+                    
+                    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 854171615125.dkr.ecr.us-east-1.amazonaws.com
+                    cd yolo5
+                    docker build -t ant-jenkins .
+                    docker tag ant-jenkins:latest 854171615125.dkr.ecr.us-east-1.amazonaws.com/ant-jenkins:latest
+                    docker push 854171615125.dkr.ecr.us-east-1.amazonaws.com/ant-jenkins:latest
+            '''
         }
-        stage('Build') {
-            steps {
-                sh 'echo "Building"'
-            }
         }
 
-         stage('push to ECR') {
-            steps {
-                sh 'echo "Ecr"'
-            }
-        }
-
-        stage('Build Yolo5 app') {
-   steps {
-       sh '''
-            
-            aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 854171615125.dkr.ecr.eu-north-1.amazonaws.com
-            cd yolo5
-            docker build -t ant .
-            docker tag ant:latest 854171615125.dkr.ecr.eu-north-1.amazonaws.com/ant:latest
-            docker push 854171615125.dkr.ecr.eu-north-1.amazonaws.com/ant:latest
-       '''
-   }
-}
-
+        stage('Trigger Deploy') {
+    steps {
+        build job: 'yolo5deploy', wait: false, parameters: [
+            string(name: 'YOLO5_IMAGE_URL', value: "<full-url-to-docker-image>")
+        ]
     }
 }
+
+            }
+        }
