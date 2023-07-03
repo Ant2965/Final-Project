@@ -32,13 +32,7 @@
         }
         }
 
-        stage('Trigger Deploy') {
-    steps {
-        build job: 'yolo5deploy', wait: false, parameters: [
-            string(name: 'YOLO5_IMAGE_URL', value: "<full-url-to-docker-image>")
-        ]
-    }
-}
+        
 
             }
         }
