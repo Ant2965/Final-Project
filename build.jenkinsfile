@@ -19,7 +19,17 @@
                     }
                 }
 
-        
-
-            }
+                stage('Build Yolo5 app') {
+                steps {
+                    sh '''
+                    
+                    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 854171615125.dkr.ecr.us-east-1.amazonaws.com
+                    cd yolo5
+                    docker build -t ant-jenkins .
+                    docker tag ant-jenkins:latest 854171615125.dkr.ecr.us-east-1.amazonaws.com/ant-jenkins:latest
+                    docker push 854171615125.dkr.ecr.us-east-1.amazonaws.com/ant-jenkins:latest
+            '''
         }
+         }
+        }
+    }
